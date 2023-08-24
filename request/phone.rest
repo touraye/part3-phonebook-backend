@@ -1,0 +1,15 @@
+GET https://phonebook-backend-jylu.onrender.com/api/persons
+
+###
+
+GET https://phonebook-backend-jylu.onrender.com/api/persons/3
+
+###
+
+POST https://phonebook-backend-jylu.onrender.com/api/persons
+Content-Type: application/json
+
+{
+    "name": "yabou",
+    "number": "220 3445 6645"
+}
