@@ -73,16 +73,19 @@ app.get( '/api/persons/:id', ( request, response ) => {
 app.delete( '/api/persons/:id', ( request, response ) => {
     const id = request.params.id
 
-    const query = persons.find( ( person ) => person.id == id )
-    
-    if ( query ) {
-        const filteredPerson = persons.filter( person => person.id.toString() !== id )
-        response.status( 201 ).json( {
-            data: filteredPerson
-        })
-    } else {
-        response.status( 404 ).json( { error: `No person found with a id of ${id}` } )
-    }
+    Person.findByIdAndDelete( id )
+        .then( person => {
+            if ( person ) {
+
+            response.status(200).json({ data: 'person deleted' })
+            } else {
+                response.status( 404 ).json({data: 'No person found'}).end()
+        }
+        } )
+        .catch( error => {
+            console.log(error)
+			response.status(400).send({ error: 'malformatted id' })
+    })
 } )
 
 app.post( '/api/persons', ( request, response ) => {
@@ -97,11 +100,7 @@ app.post( '/api/persons', ( request, response ) => {
 
         newPerson.save( ).then( returnedPerson => {
             response.status(201).json({ data: returnedPerson })
-        })
-        // persons.concat(newObject)
-        // response.status( 201 ).json( {
-        //     data: newObject
-        // })
+        })     
         
     } else {
         response.status(400).json({error: 'name or number is missing'})
