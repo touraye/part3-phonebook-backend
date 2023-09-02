@@ -1,10 +1,26 @@
-require('dotenv').config()
 const express = require( 'express' )
 const morgan = require('morgan')
 const app = express()
 const cors = require( 'cors' )
+require('dotenv').config()
 
-const Person = require('./models')
+const Person = require( './models' )
+
+const errorHandler = (error, request, response, next) => {
+	console.error(error.message)
+
+	if (error.name === 'CastError') {
+		return response.status(400).send({ error: 'malformatted id' })
+	}
+
+	next(error)
+}
+
+const unknownEndpoint = (request, response) => {
+	response.status(404).send({ error: 'unknown endpoint' })
+}
+
+
 
 app.use( express.json() )
 app.use( cors() )
@@ -70,7 +86,7 @@ app.get( '/api/persons/:id', ( request, response ) => {
     }
 } )
 
-app.delete( '/api/persons/:id', ( request, response ) => {
+app.delete( '/api/persons/:id', ( request, response, next ) => {
     const id = request.params.id
 
     Person.findByIdAndDelete( id )
@@ -83,8 +99,7 @@ app.delete( '/api/persons/:id', ( request, response ) => {
         }
         } )
         .catch( error => {
-            console.log(error)
-			response.status(400).send({ error: 'malformatted id' })
+            next(error)
     })
 } )
 
@@ -108,11 +123,9 @@ app.post( '/api/persons', ( request, response ) => {
     
 } )
 
-const unknownEndpoint = (request, response) => {
-	response.status(404).send({ error: 'unknown endpoint' })
-}
 
-app.use(unknownEndpoint)
+app.use( unknownEndpoint )
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 app.listen( PORT, () => {
