@@ -88,26 +88,20 @@ app.delete( '/api/persons/:id', ( request, response ) => {
 app.post( '/api/persons', ( request, response ) => {
     const {name, number} = request.body    
 
-    if ( name !== undefined && number !== undefined) {
-
-        const personExist = persons.find( person => person.name.toLowerCase() === name.toLowerCase() )
-        
-        if ( personExist ) {
-            return response.status( 400 ).json( {
-                error: 'name must be unique'
-            })
-        }
-        
-        const id = persons.length + 1
-        const newObject = {
-            id,
+    if ( name !== undefined && number !== undefined) {        
+                
+        const newPerson = new Person({         
             name,
             number
-        }
-        persons.concat(newObject)
-        response.status( 201 ).json( {
-            data: newObject
         })
+
+        newPerson.save( ).then( returnedPerson => {
+            response.status(201).json({ data: returnedPerson })
+        })
+        // persons.concat(newObject)
+        // response.status( 201 ).json( {
+        //     data: newObject
+        // })
         
     } else {
         response.status(400).json({error: 'name or number is missing'})
