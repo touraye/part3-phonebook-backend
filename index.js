@@ -86,7 +86,7 @@ app.get( '/api/persons/:id', ( request, response ) => {
     }
 } )
 
-app.delete( '/api/persons/:id', ( request, response, next ) => {
+app.delete( '/api/persons/:id', ( request, response ) => {
     const id = request.params.id
 
     Person.findByIdAndDelete( id )
@@ -122,6 +122,23 @@ app.post( '/api/persons', ( request, response ) => {
     }
     
 } )
+
+app.put( '/api/persons/:id', ( request, response, next ) => {
+    const { name, number } = request.body 
+    console.log('body', name ,'', number);
+
+    const newPerson = {
+        name,
+        number
+    }
+
+    Person.findByIdAndUpdate(
+        request.params.id, newPerson, { new: true }
+    ).then( updatedPerson => {
+        response.status(200).json({data: updatedPerson})} 
+        )
+        .catch( error => next( error ) )
+})
 
 
 app.use( unknownEndpoint )

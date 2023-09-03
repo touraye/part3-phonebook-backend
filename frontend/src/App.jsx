@@ -76,10 +76,10 @@ function App() {
       
       services
         .updatePerson( personExist.id, newObject )
-        .then( ( response ) => {          
+        .then( ( returnPerson ) => {               
 				setPersons(
 					persons.map((person) =>
-						person.id !== personExist.id ? person : response.data
+						person.id !== personExist.id ? person : returnPerson.data
 					)
 				)
 			})
