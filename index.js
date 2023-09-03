@@ -65,25 +65,28 @@ app.get( '/api/persons', ( request, response ) => {
     })
 } )
 
-app.get( '/api/persons/info', ( request, response ) => {
-    response.send(
-        `
-        <p>The Phonebook has a info of ${persons.length}</p>
-        <p>${new Date()}</p>
-        `
-    )
+app.get( '/api/persons/info', ( request, response, next ) => {
+    Person.countDocuments().then( count => {
+        response.send(
+            `
+            <p>The Phonebook has a info of ${count}</p>
+            <p>${new Date()}</p>
+            `
+        )        
+    }).catch(error => next(error))
 } )
 
-app.get( '/api/persons/:id', ( request, response ) => {
-    const id = request.params.id     
-    
-    const query = persons.find( person => person.id == id )
-
-    if ( query ) {
-        response.status(201).json({data: query})        
-    } else {
-        response.status(404).json({error: `No person found with a id of ${id}`})
-    }
+app.get( '/api/persons/:id', ( request, response, next ) => {
+           
+    Person.findById(request.params.id)
+			.then((returnPerson) => {
+				if (returnPerson) {
+					response.status(200).json({ data: returnPerson })
+				} else {
+					response.status(404).json('No person found').end()
+				}
+			})
+			.catch((error) => next(error))
 } )
 
 app.delete( '/api/persons/:id', ( request, response ) => {
