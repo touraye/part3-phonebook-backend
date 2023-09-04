@@ -85,8 +85,24 @@ function App() {
 					persons.map((person) =>
 						person.id !== personExist.id ? person : returnPerson.data
 					)
-				)
-			})
+        )
+          
+          setMessageType('success')
+					setNotifyMessage(`${personExist.name} number update to ${newNumber}`)
+
+					setTimeout(() => {
+						setMessageType(null)
+						setNotifyMessage('')
+					}, 5000)
+        } ).catch( error => {
+          setMessageType('error')
+          setNotifyMessage( error.response.data.error )
+          
+          setTimeout(() => {
+						setMessageType(null)
+						setNotifyMessage('')
+					}, 5000)
+      })
 		}
   }
 
@@ -98,7 +114,16 @@ function App() {
       services
         .deletePerson( deletePerson.id )
         .then( ( response ) => {
-			setPersons(newPersons)
+            setPersons( newPersons )
+            setMessageType('success')
+            setNotifyMessage(
+              `${deletePerson.name} has deleted successfully`
+            )
+          
+          setTimeout(() => {
+						setMessageType(null)
+						setNotifyMessage('')
+					}, 5000)
         } ).catch( error => {         
           setMessageType('error')
           setNotifyMessage(
