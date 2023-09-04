@@ -13,17 +13,37 @@ mongoose.connect( url )
     .catch( error => console.log( 'Error connecting to MongoDB', error.message ) )
     
 
-const personSchema = mongoose.Schema( {
-    name: {
-        type: String,
-        require: true,
-        minLength: 5
-    },
-    number: {
-        type: String,
-        require: true
-    }
-} )
+const personSchema = mongoose.Schema({
+	name: {
+		type: String,
+		minLength: 3,
+		require: true,
+	},
+	number: {
+		type: String,
+		validate: {
+		validator: function (value) {
+        // Validate that 'number' consists of two parts separated by a hyphen
+        const parts = value.split('-');
+        if (parts.length !== 2) {
+          return false;
+        }
+
+        // Validate the first part has two or three numbers
+        const firstPart = parts[0];
+        if (!/^\d{2,3}$/.test(firstPart)) {
+          return false;
+        }
+
+        // Validate the second part consists of numbers
+        const secondPart = parts[1];
+        return /^\d+$/.test(secondPart);
+      },
+      message: 'Number must have two or three digits, followed by a hyphen, and then more digits.'
+        },        
+		required: [true, 'User phone number required'],
+	},
+})
 
 
 personSchema.set('toJSON', {

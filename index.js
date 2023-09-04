@@ -110,7 +110,7 @@ app.delete( '/api/persons/:id', ( request, response ) => {
 
 app.post( '/api/persons', ( request, response, next ) => {
     const {name, number} = request.body    
-
+    
     if ( name !== undefined && number !== undefined) {        
                 
         const newPerson = new Person({         
@@ -131,8 +131,7 @@ app.post( '/api/persons', ( request, response, next ) => {
 } )
 
 app.put( '/api/persons/:id', ( request, response, next ) => {
-    const { name, number } = request.body 
-    console.log('body', name ,'', number);  
+    const { name, number } = request.body       
 
     Person.findByIdAndUpdate(
 			request.params.id,
