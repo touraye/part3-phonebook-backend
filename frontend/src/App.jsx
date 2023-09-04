@@ -48,6 +48,10 @@ function App() {
           .then( response => {
           setPersons( persons.concat( response.data ) )
           } )
+          .catch( error => {
+            setMessageType( 'error' )
+            setNotifyMessage(error.response.data.error)
+      })
       
       setNewName( '' )      
       setNewNumber( '' )
